@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>期末專題 記帳系統</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="final.css" />
+</head>
+<body id="body">
+    <div class="modal fade" id="addnewModal" tabindex="-1" role="dialog" aria-labelledby="addnewModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_head">
+                    <h5 class="modal-title" id="addnewModalLabel"><b>新增收支</b></h5>
+                    <button type="button" class="close" aria-label="Close" id="xxx">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="time_id">日期</label>
+                                <input type="date" class="form-control" id="time_id">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="type_id">類型</label>
+                                <select class="form-control" id="type_id">
+                                    <option>收入</option>
+                                    <option>支出</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="number_id">金額</label>
+                                <input type="number" class="form-control" id="number_id" placeholder="輸入金額">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="why_id">備註</label>
+                                <input type="text" class="form-control" id="why_id" placeholder="備註/原因">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="save">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <nav class="navbar" id="title">
+            <span class="navbar-brand mb-0 h1"><b>記帳系統</b></span>
+        </nav>
+        <table class="table table-bordered " id="table_total">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">總收入</th>
+                    <th scope="col">總支出</th>
+                    <th scope="col">目前餘額</th>
+                </tr>
+            </thead>
+            <tbody id="ttl_tbody">
+                <tr>
+                    <td scope="col" id="total_in">-</td>
+                    <td scope="col" id="total_out">-</td>
+                    <td scope="col" id="total_money">-</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="collapse" id="alert_collapse_break">
+            <div class="alert" role="alert" id="alert_break">
+                <b>你&nbsp;已&nbsp;破&nbsp;產！！！！</b>
+            </div>
+        </div>
+        <table class="table table-bordered" id="table1">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">日期</th>
+                    <th scope="col">收入</th>
+                    <th scope="col">支出</th>
+                    <th scope="col">餘額</th>
+                    <th scope="col">原因/備註</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div class="collapse" id="alert_collapse_his">
+            <div class="alert alert-warning" role="alert" id="alert_his">
+                未有紀錄！
+            </div>
+        </div>
+        <button type="button" class="btn float-right" data-toggle="modal" data-target="#addnewModal" id="addbtn">
+            新增收支
+        </button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="module">
+        let history = false;
+        let broke = false;
+        let already_b = false;
+        let total = 0;
+        let total_more = 0;
+        let total_lose = 0;
+        $('#alert_collapse_his').collapse('show');
+        function newrow(time, type, why, number) {
+            let more = 0;
+            let lose = 0;
+            if (type == "收入") {
+                more = number;
+                total += number;
+                total_more += number;
+            } else if (type == "支出") {
+                lose = number;
+                total -= number;
+                total_lose += number;
+            }
+
+            if (time == "") {
+                time = "未紀錄";
+            }
+            if (total < 1) {
+                broke = true;
+            } else {
+                broke = false;
+            }
+            let tr_template = '<tr>' +
+                '<th scope="row">' + time + '</th>' +
+                '<td>+' + more + '</td>' +
+                '<td>-' + lose + '</td>' +
+                '<td>' + total + '</td>' +
+                '<td>' + why + '</td>' +
+                '</tr>';
+            $('#table1 > tbody').append(tr_template);
+            $('#total_in').text('+' + total_more);
+            $('#total_out').text('-' + total_lose);
+            $('#total_money').text(total);
+
+        };
+        $(function () {
+            $('#xxx').click(function () {
+                document.getElementById('time_id').value = '';
+                document.getElementById('why_id').value = '';
+                document.getElementById('number_id').value = '';
+                $('#addnewModal').modal('hide');
+            });
+            $('#save').click(function () {
+                let time = document.getElementById('time_id').value;
+                let why = document.getElementById('why_id').value;
+                let number = Number(document.getElementById('number_id').value);
+                let type = document.getElementById('type_id').value;
+
+                document.getElementById('time_id').value = '';
+                document.getElementById('why_id').value = '';
+                document.getElementById('number_id').value = '';
+                newrow(time, type, why, number, total);
+
+                if (history == false) {
+                    history = true;
+                    $('#alert_collapse_his').collapse('hide');
+                }
+                if (broke == true) {
+                    $('#alert_collapse_break').collapse('show');
+                    if (already_b == false) {
+                        $("#body").toggleClass("broke");
+                        already_b = true;
+                    }
+                } else {
+                    $('#alert_collapse_break').collapse('hide');
+                    if (already_b == true) {
+                        $("#body").toggleClass("broke");
+                        already_b = false;
+                    }
+                }
+                $('#addnewModal').modal('hide')
+            });
+        });
+    </script>
+
+
+</body>
+</html>

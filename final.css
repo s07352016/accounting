@@ -1,0 +1,68 @@
+
+#title > span {
+    font-size: 55px;
+    color:gold;
+}
+#table1{
+    margin-top: 20px;
+    word-break: break-all;
+    table-layout: fixed;
+}
+#table_total {
+    word-break: break-all;
+    table-layout: fixed;
+}
+th, td {
+    vertical-align: middle;
+}
+th {
+    text-align:center;
+    font-size:16px;
+}
+#ttl_tbody > tr> td{
+    font-size:20px;
+    text-align:center;
+    background-color: gold;   
+}
+body {
+    background-image: url(gold.jpg);
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+#table1 >tbody>tr{
+    background-color:lightgoldenrodyellow;
+    text-align:center;
+}
+#addbtn{
+    background-color:goldenrod;
+    color:beige;
+}
+#alert_his{
+    text-align:center;
+}
+#alert_break {
+    text-align: center;
+    background-color:red;
+    color:white;
+    font-size:24px;
+}
+.broke {
+    background-image: url(broke.gif);
+    background-attachment: fixed;
+    background-position: left;
+    background-size: 25%;
+    background-repeat: repeat;
+}
+
+#modal_head{
+    background-color:gold;
+}
+#toast {
+    position: relative;
+    min-height: 200px;
+}
+#toast-body, #toast-head{
+    background-color:lightgoldenrodyellow;
+}
